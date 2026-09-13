@@ -1,0 +1,71 @@
+{% load static %}
+<table class="shop-table cart-table">
+    <thead>
+        <tr>
+            <th class="product-name"><span>محصول </span></th>
+            <th></th>
+            <th class="product-price"><span>قیمت </span></th>
+            <th class="product-quantity"><span>تعداد </span></th>
+            <th class="product-subtotal"><span>جمع فرعی </span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detail in cart.details.all %}
+        <tr>
+            <td class="product-thumbnail">
+                <div class="p-relative">
+                    <a href="{% url 'product_detail' detail.product.slug %}">
+                        <figure>
+                            {% if detail.product.main_image %}
+                            <img src="{{ detail.product.main_image.url }}" alt="{{ detail.product.title }}" width="300" height="338">
+                            {% else %}
+                            <img src="{% static 'assets/images/shop/1.jpg' %}" alt="{{ detail.product.title }}" width="300" height="338">
+                            {% endif %}
+                        </figure>
+                    </a>
+                    <button type="button" class="btn btn-close" onclick="removeOrderDetail({{ detail.id }})"><i class="fas fa-times"></i></button>
+                </div>
+            </td>
+            <td class="product-name">
+                <a href="{% url 'product_detail' detail.product.slug %}">
+                    {{ detail.product.title }}
+                </a>
+            </td>
+            <td class="product-price"><span class="amount">{{ detail.product.price }} تومان </span></td>
+            <td class="product-quantity">
+                <div class="input-group">
+                    <button type="button" class="quantity-plus w-icon-plus" onclick="changeOrderDetailCount({{ detail.id }}, 'increase')"></button>
+                    <input class="quantity form-control" type="number" min="1" value="{{ detail.count }}" readonly>
+                    <button type="button" class="quantity-minus w-icon-minus" onclick="changeOrderDetailCount({{ detail.id }}, 'decrease')"></button>
+                </div>
+            </td>
+            <td class="product-subtotal">
+                <span class="amount">{{ detail.subtotal }} تومان </span>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center py-6">سبد خرید شما خالی است.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="cart-summary mb-4">
+    <h3 class="cart-title text-uppercase">مجموع سبد </h3>
+    <div class="cart-subtotal d-flex align-items-center justify-content-between">
+        <label class="ls-25">جمع فرعی ({{ cart.total_count }} آیتم)</label>
+        <span>{{ cart.total_price }} تومان</span>
+    </div>
+    <hr class="divider mb-6">
+    <div class="order-total d-flex justify-content-between align-items-center">
+        <label>مجموع</label>
+        <span class="ls-50">{{ cart.total_price }} تومان</span>
+    </div>
+    <form method="POST" action="{% url 'checkout_cart' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-block btn-dark btn-icon-right btn-rounded btn-checkout" {% if not cart.details.all %}disabled{% endif %}>
+            پردازش و پرداخت<i class="w-icon-long-arrow-left"></i>
+        </button>
+    </form>
+</div>

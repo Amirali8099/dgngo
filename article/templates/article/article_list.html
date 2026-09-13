@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+        <main class="main">
+            <!-- Start of Page Header -->
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title mb-0">مقالات</h1>
+                </div>
+            </div>
+            <!-- End of Page Header -->
+
+            <!-- Start of Breadcrumb -->
+            <nav class="breadcrumb-nav mb-6">
+                <div class="container">
+                    <ul class="breadcrumb">
+                        <li><a href="/">خانه </a></li>
+                        <li><a href="/articles/">بلاگ </a></li>
+                        <li>لیستی</li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- End of Breadcrumb -->
+
+            <!-- Start of Page Content -->
+            <div class="page-content mb-10 pb-2">
+                <div class="container">
+                    <div class="row gutter-lg">
+                        <div class="main-content">
+                            {% for article in articles %}
+                            <article class="post post-list post-listing mb-md-10 mb-6 pb-2 overlay-zoom mb-4">
+                                <figure class="post-media br-sm">
+                                    <a href="{% url 'article_detail' article.slug %}">
+                                        {% if article.image %}
+                                        <img src="{{ article.image.url }}" width="930" height="500" alt="{{ article.title }}">
+                                        {% else %}
+                                        <img src="{% static 'assets/images/blog/classic/1.jpg' %}" width="930" height="500" alt="{{ article.title }}">
+                                        {% endif %}
+                                    </a>
+                                </figure>
+                                <div class="post-details">
+                                    <div class="post-cats text-primary">
+                                        {% if article.category %}<a href="?category={{ article.category }}">{{ article.category }}</a>{% endif %}
+                                    </div>
+                                    <h4 class="post-title">
+                                        <a href="{% url 'article_detail' article.slug %}">{{ article.title }}</a>
+                                    </h4>
+                                    <div class="post-content">
+                                        <p>{{ article.content|truncatewords:25 }}</p>
+                                        <a href="{% url 'article_detail' article.slug %}" class="btn btn-link btn-primary">(ادامه مطلب)</a>
+                                    </div>
+                                    <div class="post-meta">
+                                        {% if article.author %}توسط <a href="#" class="post-author">{{ article.author.get_full_name|default:article.author.username }}</a> - {% endif %}
+                                        <a href="#" class="post-date">{{ article.created_at|date:"Y/m/d" }}</a>
+                                    </div>
+                                </div>
+                            </article>
+                            {% empty %}
+                            <p>مقاله‌ای برای نمایش وجود ندارد.</p>
+                            {% endfor %}
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                <li class="prev">
+                                    <a href="?page={{ page_obj.previous_page_number }}" aria-label="قبلی">
+                                        <i class="w-icon-long-arrow-right"></i>قبلی
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% for num in paginator.page_range %}
+                                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                <li class="next">
+                                    <a href="?page={{ page_obj.next_page_number }}" aria-label="بعدی">
+                                       بعدی <i class="w-icon-long-arrow-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <!-- End of Main Content -->
+                        <aside class="sidebar right-sidebar blog-sidebar sidebar-fixed sticky-sidebar-wrapper">
+                            <div class="sidebar-overlay">
+                                <a href="#" class="sidebar-close">
+                                    <i class="close-icon"></i>
+                                </a>
+                            </div>
+                            <a href="#" class="sidebar-toggle">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <div class="sidebar-content">
+                                <div class="sticky-sidebar">
+                                    <div class="widget widget-search-form">
+                                        <div class="widget-body">
+                                            <form action="/articles/" method="GET" class="input-wrapper input-wrapper-inline">
+                                                <input type="text" class="form-control" name="q"
+                                                    placeholder="در بلاگ جستجو کنید" autocomplete="off" required>
+                                                <button class="btn btn-search"><i
+                                                        class="w-icon-search"></i></button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- End of Widget search form -->
+                                    <div class="widget widget-categories">
+                                        <h3 class="widget-title bb-no mb-0">دسته بندیها </h3>
+                                        <ul class="widget-body filter-items search-ul">
+                                            {% for category in categories %}
+                                            <li><a href="?category={{ category }}">{{ category }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <!-- End of Widget categories -->
+                                    <div class="widget widget-posts">
+                                        <h3 class="widget-title bb-no">پست های محبوب </h3>
+                                        <div class="widget-body">
+                                            <div class="swiper">
+                                                <div class="swiper-container swiper-theme nav-top" data-swiper-options="{
+                                                    'spaceBetween': 20,
+                                                    'slidesPerView': 1
+                                                }">
+                                                    <div class="swiper-wrapper row cols-1">
+                                                        <div class="swiper-slide widget-col">
+                                                            <div class="post-widget mb-4">
+                                                                <figure class="post-media br-sm">
+                                                                    <img src="{% static 'assets/images/blog/sidebar/1.jpg' %}" alt="150" height="150" />
+                                                                </figure>
+                                                                <div class="post-details">
+                                                                    <div class="post-meta">
+                                                                        <a href="#" class="post-date">خرداد 5</a>
+                                                                    </div>
+                                                                    <h4 class="post-title">
+                                                                        <a href="/articles/1/">مد از نقطه نظر بیرونی به شما می گوید که چه کسی هستید</a>
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                            <div class="post-widget mb-4">
+                                                                <figure class="post-media br-sm">
+                                                                    <img src="{% static 'assets/images/blog/sidebar/2.jpg' %}" alt="150" height="150" />
+                                                                </figure>
+                                                                <div class="post-details">
+                                                                    <div class="post-meta">
+                                                                        <a href="#" class="post-date">خرداد 5</a>
+                                                                    </div>
+                                                                    <h4 class="post-title">
+                                                                        <a href="/articles/1/">لباس مردانه تابستانی جدید پیدا شد</a>
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                            <div class="post-widget mb-2">
+                                                                <figure class="post-media br-sm">
+                                                                    <img src="{% static 'assets/images/blog/sidebar/3.jpg' %}" alt="150" height="150" />
+                                                                </figure>
+                                                                <div class="post-details">
+                                                                    <div class="post-meta">
+                                                                        <a href="#" class="post-date">خرداد 5</a>
+                                                                    </div>
+                                                                    <h4 class="post-title">
+                                                                        <a href="/articles/1/">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</a>
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="swiper-slide widget-col">
+                                                            <div class="post-widget mb-4">
+                                                                <figure class="post-media br-sm">
+                                                                    <img src="{% static 'assets/images/blog/sidebar/4.jpg' %}" alt="150" height="150" />
+                                                                </figure>
+                                                                <div class="post-details">
+                                                                    <div class="post-meta">
+                                                                        <a href="#" class="post-date">خرداد 5</a>
+                                                                    </div>
+                                                                    <h4 class="post-title">
+                                                                        <a href="/articles/1/">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. با تولید سادگی</a>
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                            <div class="post-widget mb-4">
+                                                                <figure class="post-media br-sm">
+                                                                    <img src="{% static 'assets/images/blog/sidebar/5.jpg' %}" alt="150" height="150" />
+                                                                </figure>
+                                                                <div class="post-details">
+                                                                    <div class="post-meta">
+                                                                        <a href="#" class="post-date">خرداد 5</a>
+                                                                    </div>
+                                                                    <h4 class="post-title">
+                                                                        <a href="/articles/1/">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</a>
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                            <div class="post-widget mb-2">
+                                                                <figure class="post-media br-sm">
+                                                                    <img src="{% static 'assets/images/blog/sidebar/6.jpg' %}" alt="150" height="150" />
+                                                                </figure>
+                                                                <div class="post-details">
+                                                                    <div class="post-meta">
+                                                                        <a href="#" class="post-date">خرداد 5</a>
+                                                                    </div>
+                                                                    <h4 class="post-title">
+                                                                        <a href="/articles/1/">یک پست وبلاگ جالب با تصاویر ارائه می شود</a>
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="swiper-button-next"></div>
+                                                    <div class="swiper-button-prev"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End of Widget posts -->
+                                    <div class="widget widget-custom-block">
+                                        <h3 class="widget-title bb-no">بلوک سفارشی </h3>
+                                        <div class="widget-body">
+                                            <p class="text-default mb-0">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد.</p>
+                                        </div>
+                                    </div>
+                                    <!-- End of Widget custom block -->
+                                    <div class="widget widget-tags">
+                                        <h3 class="widget-title bb-no">برچسب های جدید </h3>
+                                        <div class="widget-body tags">
+                                            <a href="#" class="tag">مد </a>
+                                            <a href="#" class="tag">سبک </a>
+                                            <a href="#" class="tag">مسافرت </a>
+                                            <a href="#" class="tag">زنانه </a>
+                                            <a href="#" class="tag">زنانه </a>
+                                            <a href="#" class="tag">سرگرمی ها </a>
+                                            <a href="#" class="tag">خريد كردن </a>
+                                            <a href="#" class="tag">عکاسی </a>
+                                        </div>
+                                    </div>
+                                    <div class="widget widget-calendar">
+                                        <h3 class="widget-title bb-no">تقویم </h3>
+                                        <div class="widget-body">
+                                            <div class="calendar-container" data-calendar-options="{
+                                                'dayExcerpt': 1
+                                            }"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Page Content -->
+        </main>
+{% endblock %}

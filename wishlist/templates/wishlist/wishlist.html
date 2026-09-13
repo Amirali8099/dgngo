@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+        <main class="main wishlist-page">
+            <!-- Start of Page Header -->
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title mb-0">علاقه مندیها</h1>
+                </div>
+            </div>
+            <!-- End of Page Header -->
+
+            <!-- Start of Breadcrumb -->
+            <nav class="breadcrumb-nav mb-10">
+                <div class="container">
+                    <ul class="breadcrumb">
+                        <li><a href="/">خانه </a></li>
+                        <li>علاقه مندیها</li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- End of Breadcrumb -->
+
+            <!-- Start of PageContent -->
+            <div class="page-content">
+                <div class="container">
+                    <h3 class="wishlist-title">علاقه مندیهای من</h3>
+                    <table class="shop-table wishlist-table">
+                        <thead>
+                            <tr>
+                                <th class="product-name"><span>محصول </span></th>
+                                <th></th>
+                                <th class="product-price"><span>قیمت </span></th>
+                                <th class="product-stock-status"><span>وضعیت انبار </span></th>
+                                <th class="wishlist-action">اقدامات </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td class="product-thumbnail">
+                                    <div class="p-relative">
+                                        <a href="{% url 'product_detail' item.product.slug %}">
+                                            <figure>
+                                                {% if item.product.main_image %}
+                                                <img src="{{ item.product.main_image.url }}" alt="{{ item.product.title }}" width="300" height="338">
+                                                {% else %}
+                                                <img src="{% static 'assets/images/shop/1.jpg' %}" alt="{{ item.product.title }}" width="300" height="338">
+                                                {% endif %}
+                                            </figure>
+                                        </a>
+                                        <a href="{% url 'toggle_wishlist' item.product.id %}" class="btn btn-close"><i class="fas fa-times"></i></a>
+                                    </div>
+                                </td>
+                                <td class="product-name">
+                                    <a href="{% url 'product_detail' item.product.slug %}">
+                                        {{ item.product.title }}
+                                    </a>
+                                </td>
+                                <td class="product-price">
+                                    <ins class="new-price">{{ item.product.price }} تومان</ins>
+                                </td>
+                                <td class="product-stock-status">
+                                    {% if item.product.is_available %}
+                                    <span class="wishlist-in-stock">در انبار</span>
+                                    {% else %}
+                                    <span class="wishlist-out-of-stock">ناموجود</span>
+                                    {% endif %}
+                                </td>
+                                <td class="wishlist-action">
+                                    <div class="d-lg-flex">
+                                        <a href="{% url 'product_detail' item.product.slug %}"
+                                            class="btn btn-quickview btn-outline btn-default btn-rounded btn-sm mb-2 mb-lg-0">نمایش سریع</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-6">لیست علاقه‌مندی‌های شما خالیه.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="social-links">
+                        <label>اشتراک در:</label>
+                        <div class="social-icons social-no-color border-thin">
+                            <a href="#" class="social-icon social-facebook w-icon-facebook"></a>
+                            <a href="#" class="social-icon social-twitter w-icon-twitter"></a>
+                            <a href="#" class="social-icon social-pinterest w-icon-pinterest"></a>
+                            <a href="#" class="social-icon social-email far fa-envelope"></a>
+                            <a href="#" class="social-icon social-whatsapp fab fa-whatsapp"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of PageContent -->
+        </main>
+{% endblock %}
